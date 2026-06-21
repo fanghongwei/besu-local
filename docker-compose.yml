@@ -4,7 +4,7 @@ services:
   node1:
     image: hyperledger/besu:latest
     command:
-      - --network=dev
+      - --genesis-file=/opt/besu/genesis.json
       - --rpc-http-enabled
       - --rpc-http-api=ETH,NET,WEB3,ADMIN
       - --rpc-http-cors-origins=*
@@ -12,12 +12,14 @@ services:
       - --p2p-host=172.28.0.11
       - --nat-method=NONE
       - --data-path=/opt/besu/data
+      - --sync-min-peers=4
     ports:
       - "8545:8545" # HTTP RPC
       - "30303:30303" # P2P Discovery
     volumes:
       - node1_data:/opt/besu/data
       - ./static-nodes-node1.json:/opt/besu/data/static-nodes.json
+      - ./genesis.json:/opt/besu/genesis.json:ro
     networks:
       besu_net:
         ipv4_address: 172.28.0.11
@@ -25,7 +27,7 @@ services:
   node2:
     image: hyperledger/besu:latest
     command:
-      - --network=dev
+      - --genesis-file=/opt/besu/genesis.json
       - --rpc-http-enabled
       - --rpc-http-api=ETH,NET,WEB3,ADMIN
       - --rpc-http-cors-origins=*
@@ -34,12 +36,14 @@ services:
       - --nat-method=NONE
       - --bootnodes=enode://d6513b4a725d0ad031ec1345f65512118ff1ff7d7ae7417ec87a34d640e5e0afaf0f08dbf80a6d32acef20fdd8b220cc9f66db7de0f9d109b864ceb0a82cd099@172.28.0.11:30303
       - --data-path=/opt/besu/data
+      - --sync-min-peers=4
     ports:
       - "8546:8545" # Shifted local port to avoid conflict
       - "30304:30303"
     volumes:
       - node2_data:/opt/besu/data
       - ./static-nodes-node2.json:/opt/besu/data/static-nodes.json
+      - ./genesis.json:/opt/besu/genesis.json:ro
     networks:
       besu_net:
         ipv4_address: 172.28.0.12
@@ -49,7 +53,7 @@ services:
   node3:
     image: hyperledger/besu:latest
     command:
-      - --network=dev
+      - --genesis-file=/opt/besu/genesis.json
       - --rpc-http-enabled
       - --rpc-http-api=ETH,NET,WEB3,ADMIN
       - --rpc-http-cors-origins=*
@@ -58,12 +62,14 @@ services:
       - --nat-method=NONE
       - --bootnodes=enode://d6513b4a725d0ad031ec1345f65512118ff1ff7d7ae7417ec87a34d640e5e0afaf0f08dbf80a6d32acef20fdd8b220cc9f66db7de0f9d109b864ceb0a82cd099@172.28.0.11:30303
       - --data-path=/opt/besu/data
+      - --sync-min-peers=4
     ports:
       - "8547:8545" # Shifted local port to avoid conflict
       - "30305:30303"
     volumes:
       - node3_data:/opt/besu/data
       - ./static-nodes-node3.json:/opt/besu/data/static-nodes.json
+      - ./genesis.json:/opt/besu/genesis.json:ro
     networks:
       besu_net:
         ipv4_address: 172.28.0.13
@@ -73,7 +79,7 @@ services:
   node4:
     image: hyperledger/besu:latest
     command:
-      - --network=dev
+      - --genesis-file=/opt/besu/genesis.json
       - --rpc-http-enabled
       - --rpc-http-api=ETH,NET,WEB3,ADMIN
       - --rpc-http-cors-origins=*
@@ -82,12 +88,14 @@ services:
       - --nat-method=NONE
       - --bootnodes=enode://d6513b4a725d0ad031ec1345f65512118ff1ff7d7ae7417ec87a34d640e5e0afaf0f08dbf80a6d32acef20fdd8b220cc9f66db7de0f9d109b864ceb0a82cd099@172.28.0.11:30303
       - --data-path=/opt/besu/data
+      - --sync-min-peers=4
     ports:
       - "8548:8545"
       - "30306:30303"
     volumes:
       - node4_data:/opt/besu/data
       - ./static-nodes-node4.json:/opt/besu/data/static-nodes.json
+      - ./genesis.json:/opt/besu/genesis.json:ro
     networks:
       besu_net:
         ipv4_address: 172.28.0.14
@@ -97,7 +105,7 @@ services:
   node5:
     image: hyperledger/besu:latest
     command:
-      - --network=dev
+      - --genesis-file=/opt/besu/genesis.json
       - --rpc-http-enabled
       - --rpc-http-api=ETH,NET,WEB3,ADMIN
       - --rpc-http-cors-origins=*
@@ -106,12 +114,14 @@ services:
       - --nat-method=NONE
       - --bootnodes=enode://d6513b4a725d0ad031ec1345f65512118ff1ff7d7ae7417ec87a34d640e5e0afaf0f08dbf80a6d32acef20fdd8b220cc9f66db7de0f9d109b864ceb0a82cd099@172.28.0.11:30303
       - --data-path=/opt/besu/data
+      - --sync-min-peers=4
     ports:
       - "8549:8545"
       - "30307:30303"
     volumes:
       - node5_data:/opt/besu/data
       - ./static-nodes-node5.json:/opt/besu/data/static-nodes.json
+      - ./genesis.json:/opt/besu/genesis.json:ro
     networks:
       besu_net:
         ipv4_address: 172.28.0.15
@@ -121,7 +131,7 @@ services:
   node6:
     image: hyperledger/besu:latest
     command:
-      - --network=dev
+      - --genesis-file=/opt/besu/genesis.json
       - --rpc-http-enabled
       - --rpc-http-api=ETH,NET,WEB3,ADMIN
       - --rpc-http-cors-origins=*
@@ -130,12 +140,14 @@ services:
       - --nat-method=NONE
       - --bootnodes=enode://d6513b4a725d0ad031ec1345f65512118ff1ff7d7ae7417ec87a34d640e5e0afaf0f08dbf80a6d32acef20fdd8b220cc9f66db7de0f9d109b864ceb0a82cd099@172.28.0.11:30303
       - --data-path=/opt/besu/data
+      - --sync-min-peers=4
     ports:
       - "8550:8545"
       - "30308:30303"
     volumes:
       - node6_data:/opt/besu/data
       - ./static-nodes-node6.json:/opt/besu/data/static-nodes.json
+      - ./genesis.json:/opt/besu/genesis.json:ro
     networks:
       besu_net:
         ipv4_address: 172.28.0.16

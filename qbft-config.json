@@ -1,0 +1,70 @@
+{
+  "genesis": {
+    "config": {
+      "chainId": 1337,
+      "homesteadBlock": 0,
+      "eip150Block": 0,
+      "eip155Block": 0,
+      "eip158Block": 0,
+      "byzantiumBlock": 0,
+      "constantinopleBlock": 0,
+      "petersburgBlock": 0,
+      "istanbulBlock": 0,
+      "muirGlacierBlock": 0,
+      "berlinBlock": 0,
+      "londonBlock": 0,
+      "qbft": {
+        "blockperiodseconds": 2,
+        "epochlength": 30000,
+        "requesttimeoutseconds": 4
+      }
+    },
+    "nonce": "0x0",
+    "timestamp": "0x0",
+    "gasLimit": "0x1c9c380",
+    "difficulty": "0x1",
+    "mixHash": "0x63746963616c2062797a616e74696e65206661756c7420746f6c6572616e6365",
+    "coinbase": "0x0000000000000000000000000000000000000000",
+    "number": "0x0",
+    "gasUsed": "0x0",
+    "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "alloc": {
+      "0xc0ffee254729296a45a3885639ac7e10f9d54979": {
+        "balance": "1000000000000000000000"
+      },
+      "0xc0ffee254729296a45a3885639ac7e10f9d54980": {
+        "balance": "1000000000000000000000"
+      },
+      "0xc0ffee254729296a45a3885639ac7e10f9d54981": {
+        "balance": "1000000000000000000000"
+      },
+      "0xc0ffee254729296a45a3885639ac7e10f9d54982": {
+        "balance": "1000000000000000000000"
+      },
+      "0xc0ffee254729296a45a3885639ac7e10f9d54983": {
+        "balance": "1000000000000000000000"
+      },
+      "0xc0ffee254729296a45a3885639ac7e10f9d54984": {
+        "balance": "1000000000000000000000"
+      },
+      "0xc0ffee254729296a45a3885639ac7e10f9d54985": {
+        "balance": "1000000000000000000000"
+      },
+      "0xc0ffee254729296a45a3885639ac7e10f9d54986": {
+        "balance": "1000000000000000000000"
+      },
+      "0xc0ffee254729296a45a3885639ac7e10f9d54987": {
+        "balance": "1000000000000000000000"
+      },
+      "0xc0ffee254729296a45a3885639ac7e10f9d54988": {
+        "balance": "1000000000000000000000"
+      }
+    }
+  },
+  "blockchain": {
+    "nodes": {
+      "generate": true,
+      "count": 6
+    }
+  }
+}

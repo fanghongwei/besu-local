@@ -14,7 +14,7 @@ services:
       - "--sync-min-peers=1"
       - "--rpc-http-enabled"
       - "--rpc-http-host=0.0.0.0"
-      - "--rpc-http-api=ETH,NET,WEB3,ADMIN,QBFT"
+      - "--rpc-http-api=ETH,NET,WEB3,ADMIN,QBFT,TXPOOL"
       - "--host-allowlist=localhost,127.0.0.1"
       - "--min-gas-price=1000000000"
       - "--p2p-host=172.28.0.11"
@@ -58,7 +58,7 @@ services:
       - "--sync-min-peers=1"
       - "--rpc-http-enabled"
       - "--rpc-http-host=0.0.0.0"
-      - "--rpc-http-api=ETH,NET,WEB3,ADMIN,QBFT"
+      - "--rpc-http-api=ETH,NET,WEB3,ADMIN,QBFT,TXPOOL"
       - "--host-allowlist=localhost,127.0.0.1"
       - "--min-gas-price=1000000000"
       - "--p2p-host=172.28.0.12"
@@ -102,7 +102,7 @@ services:
       - "--sync-min-peers=1"
       - "--rpc-http-enabled"
       - "--rpc-http-host=0.0.0.0"
-      - "--rpc-http-api=ETH,NET,WEB3,ADMIN,QBFT"
+      - "--rpc-http-api=ETH,NET,WEB3,ADMIN,QBFT,TXPOOL"
       - "--host-allowlist=localhost,127.0.0.1"
       - "--min-gas-price=1000000000"
       - "--p2p-host=172.28.0.13"
@@ -146,7 +146,7 @@ services:
       - "--sync-min-peers=1"
       - "--rpc-http-enabled"
       - "--rpc-http-host=0.0.0.0"
-      - "--rpc-http-api=ETH,NET,WEB3,ADMIN,QBFT"
+      - "--rpc-http-api=ETH,NET,WEB3,ADMIN,QBFT,TXPOOL"
       - "--host-allowlist=localhost,127.0.0.1"
       - "--min-gas-price=1000000000"
       - "--p2p-host=172.28.0.14"
@@ -190,7 +190,7 @@ services:
       - "--sync-min-peers=1"
       - "--rpc-http-enabled"
       - "--rpc-http-host=0.0.0.0"
-      - "--rpc-http-api=ETH,NET,WEB3,ADMIN,QBFT"
+      - "--rpc-http-api=ETH,NET,WEB3,ADMIN,QBFT,TXPOOL"
       - "--host-allowlist=localhost,127.0.0.1"
       - "--min-gas-price=1000000000"
       - "--p2p-host=172.28.0.15"
@@ -234,7 +234,7 @@ services:
       - "--sync-min-peers=1"
       - "--rpc-http-enabled"
       - "--rpc-http-host=0.0.0.0"
-      - "--rpc-http-api=ETH,NET,WEB3,ADMIN,QBFT"
+      - "--rpc-http-api=ETH,NET,WEB3,ADMIN,QBFT,TXPOOL"
       - "--host-allowlist=localhost,127.0.0.1"
       - "--min-gas-price=1000000000"
       - "--p2p-host=172.28.0.16"
@@ -264,6 +264,45 @@ services:
       besu_net:
         ipv4_address: 172.28.0.16
 
+  # Non-validator: Besu generates its own identity in the persistent data volume.
+  rpcnode:
+    image: hyperledger/besu:26.10.0
+    command:
+      - "--genesis-file=/config/genesis.json"
+      - "--data-path=/opt/besu/data"
+      - "--static-nodes-file=/config/static-nodes.json"
+      - "--discovery-enabled=false"
+      - "--bootnodes="
+      - "--nat-method=NONE"
+      - "--sync-mode=FULL"
+      - "--sync-min-peers=1"
+      - "--p2p-host=172.28.0.17"
+      - "--rpc-http-enabled"
+      - "--rpc-http-host=0.0.0.0"
+      - "--rpc-http-api=ETH,NET,WEB3,TXPOOL"
+      - "--host-allowlist=localhost,127.0.0.1"
+      - "--min-gas-price=1000000000"
+    ports:
+      - "127.0.0.1:8551:8545"
+    volumes:
+      - qbft_rpc_data:/opt/besu/data
+      - type: bind
+        source: ./network/genesis.json
+        target: /config/genesis.json
+        read_only: true
+        bind:
+          create_host_path: false
+      # Reuse node1's list of validators node2 through node6.
+      - type: bind
+        source: ./network/node1/static-nodes.json
+        target: /config/static-nodes.json
+        read_only: true
+        bind:
+          create_host_path: false
+    networks:
+      besu_net:
+        ipv4_address: 172.28.0.17
+
 networks:
   besu_net:
     driver: bridge
@@ -278,3 +317,4 @@ volumes:
   qbft_node4_data:
   qbft_node5_data:
   qbft_node6_data:
+  qbft_rpc_data:

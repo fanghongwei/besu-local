@@ -1,7 +1,7 @@
 # Besu six-node local QBFT network
 
 Six persistent QBFT validators run Besu **26.10.0**. Blocks are proposed every
-2 seconds. RPC ports 8545–8550 are available only on localhost. P2P traffic stays
+2 seconds. A non-validator RPC node is available on port 8551. RPC ports 8545–8551 are available only on localhost. P2P traffic stays
 inside the Docker bridge network.
 
 ## Start (including migration from the old Ethash setup)
@@ -15,7 +15,7 @@ cd ~/workspace/besu-local
 
 The script generates six random validator keys using Besu's official
 `operator generate-blockchain-config` command, creates matching static peer
-lists, starts all six nodes, and waits up to 180 seconds for a live chain.
+lists, starts all seven nodes, and waits up to 180 seconds for a live chain.
 On later runs it reuses the same keys and genesis.
 
 The old containers are recreated automatically. The replacement uses new
@@ -43,7 +43,7 @@ docker compose ps -a
 python3 scripts/check-network.py
 ```
 
-The check requires five peers per node, the expected six-validator set on every
+The check requires at least five peers per validator, the expected six-validator set on every
 node, and increasing block heights on every node. Container health alone does
 not prove consensus is working.
 
@@ -59,9 +59,32 @@ curl -sS http://localhost:8545 -H 'Content-Type: application/json' \
   --data '{"jsonrpc":"2.0","method":"qbft_getValidatorsByBlockNumber","params":["latest"],"id":1}'
 ```
 
-Expected peer count is `0x5`. Block height should increase on successive calls.
+Expected validator peer count is at least `0x5` (the RPC node adds a peer to nodes 2–6). Block height should increase on successive calls.
 RPC ports 8545, 8546, 8547, 8548, 8549, and 8550 correspond to nodes 1–6.
 With six validators, at least four must be online to commit blocks.
+
+## Live status and transaction pool
+
+Apply the TXPOOL API configuration once (recreates containers, preserves data):
+
+```bash
+docker compose up -d
+```
+
+```bash
+./network-status.py                     # one snapshot of all seven nodes
+./network-status.py --watch 5           # refresh every five seconds; Ctrl-C stops
+./network-status.py --transactions      # also list pool entries, including hashes
+./network-status.py --json              # machine-readable output
+```
+
+Reports current block height, transactions in the latest block, peers, syncing,
+and local/remote/total pool transaction counts for each node. Pool transactions
+can appear on multiple nodes; do not sum the counts. Counts are snapshots, so a
+transaction may already be mined by the next refresh. Missing data is displayed
+as `-` with an error, never as an empty pool. One-shot mode exits nonzero if any
+RPC query fails. This is a status snapshot; use `scripts/check-network.py` to
+verify block growth over time.
 
 ## Stop and restart
 
@@ -93,7 +116,7 @@ docker compose config --quiet
 - **Port already allocated:** stop any other service using ports 8545–8550.
 - **No block growth:** inspect all validator logs and ensure at least four
   validators are online. The six-node verification additionally requires all
-  six nodes and five peers each.
+  six validators and at least five peers each.
 - **Genesis mismatch:** do not combine old Ethash volumes or another network's
   volumes with the generated QBFT genesis. Do not regenerate keys as a repair.
 - **Subnet conflict:** this network uses `172.28.0.0/16`. Both the Compose subnet
@@ -114,3 +137,19 @@ docker compose config --quiet
 ```
 
 Based on the [official Besu QBFT tutorial](https://docs.besu-eth.org/private-networks/tutorials/qbft).
+
+## Dedicated RPC node
+
+`rpcnode` exposes `http://localhost:8551` with ETH, NET, WEB3 and TXPOOL APIs.
+It syncs the existing chain and relays transactions but does not participate as
+one of the six QBFT validators. It connects to nodes 2–6 using node1's static
+peer list. Its own node identity and chain data persist in `qbft_rpc_data`.
+No genesis change or validator vote is needed.
+
+```bash
+docker compose up -d rpcnode
+docker compose logs -f rpcnode
+```
+
+`./start.sh` starts this node along with the validators. `network-status.py`
+includes all seven nodes; `scripts/check-network.py` checks the six validators.

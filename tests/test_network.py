@@ -67,6 +67,13 @@ class VerificationTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     check.snapshot({'0x1'})
 
+    def test_accepts_additional_rpc_peer(self):
+        def rpc(port, method, params=None):
+            return {'net_peerCount': '0x6', 'eth_blockNumber': '0x2',
+                    'qbft_getValidatorsByBlockNumber': ['0x1']}[method]
+        with patch.object(check, 'rpc', side_effect=rpc):
+            self.assertEqual(check.snapshot({'0x1'}), [2] * 6)
+
     def run_check(self, snapshots):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

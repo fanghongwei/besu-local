@@ -33,8 +33,8 @@ def snapshot(expected):
         height = int(rpc(port, 'eth_blockNumber'), 16)
         validators = {v.lower() for v in rpc(
             port, 'qbft_getValidatorsByBlockNumber', ['latest'])}
-        if peers != 5 or validators != expected:
-            raise ValueError(f'port {port}: {peers}/5 peers; '
+        if peers < 5 or validators != expected:
+            raise ValueError(f'port {port}: {peers} peers (at least 5 required); '
                              f'{len(validators)}/6 matching validators required')
         heights.append(height)
     return heights
@@ -49,7 +49,7 @@ def main():
     deadline = time.monotonic() + args.timeout
     baseline = None
     last_error = 'Waiting for RPC endpoints'
-    print('Checking six nodes for five peers, six validators, and block growth...', flush=True)
+    print('Checking six nodes for at least five peers, six validators, and block growth...', flush=True)
     while time.monotonic() < deadline:
         try:
             heights = snapshot(expected)
@@ -57,7 +57,7 @@ def main():
                 baseline = heights
             elif all(h > b for h, b in zip(heights, baseline)):
                 for i, height in enumerate(heights, 1):
-                    print(f'node{i}: port {8544+i}, 5 peers, 6 validators, block {height}')
+                    print(f'node{i}: port {8544+i}, at least 5 peers, 6 validators, block {height}')
                 print('PASS: all six nodes are producing/importing new QBFT blocks.')
                 return 0
             last_error = f'Waiting for blocks to advance on all nodes: {heights}'
